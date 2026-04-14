@@ -1,23 +1,30 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation"; // To detect current URL
 
 const Navbar = () => {
-  // This state will track which button is "active" even if the URL stays "/"
-  const [activeTab, setActiveTab] = useState("home");
+  const pathname = usePathname(); // This tells us where we are (e.g., "/" or "/timeline")
 
   const navLinks = [
     {
       id: "home",
       name: "Home",
+      path: "/",
       icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
     },
     {
       id: "timeline",
       name: "Timeline",
+      path: "/timeline", // Make sure this matches your folder name in /app
       icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
     },
-    { id: "stats", name: "Stats", icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" },
+    {
+      id: "stats",
+      name: "Stats",
+      path: "/stats",
+      icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
+    },
   ];
 
   return (
@@ -51,16 +58,17 @@ const Navbar = () => {
           >
             {navLinks.map((link) => (
               <li key={link.id}>
-                <button
-                  onClick={() => setActiveTab(link.id)}
+                {/* Changed button to Link for mobile */}
+                <Link
+                  href={link.path}
                   className={`w-full text-left px-4 py-2 rounded-md transition-colors ${
-                    activeTab === link.id
+                    pathname === link.path
                       ? "text-emerald-800 font-bold bg-emerald-50"
                       : "text-slate-600"
                   }`}
                 >
                   {link.name}
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
@@ -82,13 +90,14 @@ const Navbar = () => {
       <div className="navbar-end hidden lg:flex">
         <div className="flex gap-2">
           {navLinks.map((link) => (
-            <button
+            /* Changed button to Link for desktop */
+            <Link
               key={link.id}
-              onClick={() => setActiveTab(link.id)}
-              className={`flex items-center gap-2 px-6 py-2 rounded-lg transition-all duration-300 font-medium cursor-pointer border-none
+              href={link.path}
+              className={`flex items-center gap-2 px-6 py-2 rounded-lg transition-all duration-300 font-medium border-none
                 ${
-                  activeTab === link.id
-                    ? "!bg-emerald-800 !text-white shadow-md shadow-emerald-200"
+                  pathname === link.path
+                    ? "bg-emerald-800 text-white shadow-md shadow-emerald-200"
                     : "text-slate-500 hover:text-emerald-800 hover:bg-emerald-50"
                 }`}
             >
@@ -107,7 +116,7 @@ const Navbar = () => {
                 />
               </svg>
               {link.name}
-            </button>
+            </Link>
           ))}
         </div>
       </div>
