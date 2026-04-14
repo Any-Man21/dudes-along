@@ -1,14 +1,13 @@
-"use client"; // REQUIRED for event handlers and localStorage
+"use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import toast from "react-hot-toast"; // Make sure you ran: npm install react-hot-toast
+import toast from "react-hot-toast";
 import friendsData from "../../data/friends.json";
 import Navbar from "@/app/Components/Navbar";
 import Footer from "@/app/Components/Footer";
 
 export default function CardDetailPage({ params }) {
-  // Standard way to handle params in Next.js Client Components
   const { id } = React.use(params);
   const friend = friendsData.find((f) => f.id.toString() === id);
 
@@ -16,7 +15,6 @@ export default function CardDetailPage({ params }) {
   const handleCheckIn = (type) => {
     if (!friend) return;
 
-    // 1. Create the timeline entry object
     const newEntry = {
       id: Date.now(),
       type: type, // "Call", "Text", or "Video"
@@ -28,22 +26,19 @@ export default function CardDetailPage({ params }) {
       }),
     };
 
-    // 2. Get existing timeline data or start fresh
     const existingHistory = JSON.parse(
       localStorage.getItem("contactHistory") || "[]",
     );
 
-    // 3. Add new entry to the front (top) of the array
     const updatedHistory = [newEntry, ...existingHistory];
 
-    // 4. Save back to LocalStorage
     localStorage.setItem("contactHistory", JSON.stringify(updatedHistory));
 
-    // 5. Show the professional toast notification
+    //  Show the professional toast notification
     toast.success(`${type} with ${friend.name} recorded!`, {
       style: {
         borderRadius: "12px",
-        background: "#064e3b", // Your brand emerald color
+        background: "#064e3b",
         color: "#fff",
         fontWeight: "bold",
       },
