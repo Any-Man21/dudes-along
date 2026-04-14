@@ -68,16 +68,17 @@ const Navbar = () => {
 
         {/* Logo */}
         <div className="flex items-center gap-1 cursor-pointer">
-          <span className="text-xl font-bold tracking-tight text-slate-800">
-            Keen
-          </span>
-          <span className="text-xl font-bold tracking-tight text-emerald-800">
-            Keeper
-          </span>
+          <Link href="/">
+            <span className="text-xl font-bold tracking-tight text-slate-800">
+              Keen
+            </span>
+            <span className="text-xl font-bold tracking-tight text-emerald-800">
+              Keeper
+            </span>
+          </Link>
         </div>
       </div>
 
-      {/* Desktop Links */}
       <div className="navbar-end hidden lg:flex">
         <div className="flex gap-2">
           {navLinks.map((link) => (

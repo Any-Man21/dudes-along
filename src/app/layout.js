@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from 'react-hot-toast';
 import "./globals.css";
 import Navbar from "./Components/Navbar";
 import HomeSection from "./Components/HomeSection";
@@ -28,7 +29,7 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col">
 
-          
+          <Toaster position="top-center" />
           {children}
           
         

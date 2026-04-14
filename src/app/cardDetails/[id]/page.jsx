@@ -1,13 +1,54 @@
-import React from "react";
+"use client"; // REQUIRED for event handlers and localStorage
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import toast from "react-hot-toast"; // Make sure you ran: npm install react-hot-toast
 import friendsData from "../../data/friends.json";
 import Navbar from "@/app/Components/Navbar";
 import Footer from "@/app/Components/Footer";
 
-export default async function CardDetailPage({ params }) {
-  const { id } = await params;
+export default function CardDetailPage({ params }) {
+  // Standard way to handle params in Next.js Client Components
+  const { id } = React.use(params);
   const friend = friendsData.find((f) => f.id.toString() === id);
+
+  // Logic to handle clicking Call, Text, or Video
+  const handleCheckIn = (type) => {
+    if (!friend) return;
+
+    // 1. Create the timeline entry object
+    const newEntry = {
+      id: Date.now(),
+      type: type, // "Call", "Text", or "Video"
+      friendName: friend.name,
+      date: new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }),
+    };
+
+    // 2. Get existing timeline data or start fresh
+    const existingHistory = JSON.parse(
+      localStorage.getItem("contactHistory") || "[]",
+    );
+
+    // 3. Add new entry to the front (top) of the array
+    const updatedHistory = [newEntry, ...existingHistory];
+
+    // 4. Save back to LocalStorage
+    localStorage.setItem("contactHistory", JSON.stringify(updatedHistory));
+
+    // 5. Show the professional toast notification
+    toast.success(`${type} with ${friend.name} recorded!`, {
+      style: {
+        borderRadius: "12px",
+        background: "#064e3b", // Your brand emerald color
+        color: "#fff",
+        fontWeight: "bold",
+      },
+    });
+  };
 
   if (!friend) {
     return (
@@ -43,7 +84,6 @@ export default async function CardDetailPage({ params }) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             {/* LEFT COLUMN: Profile & Actions */}
             <div className="lg:col-span-4 space-y-6">
-              {/* Profile Card */}
               <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm flex flex-col items-center border border-slate-100">
                 <div className="relative w-24 h-24 md:w-32 md:h-32 mb-6">
                   <Image
@@ -77,7 +117,7 @@ export default async function CardDetailPage({ params }) {
                 </p>
               </div>
 
-              {/* Action Buttons: Snooze, Archive, Delete */}
+              {/* Action Buttons */}
               <div className="space-y-3">
                 <button className="w-full bg-white py-4 px-6 rounded-xl shadow-sm border border-slate-100 flex items-center justify-center gap-3 text-slate-700 font-bold text-sm hover:bg-slate-50 transition-colors">
                   <span>🔔</span> Snooze 2 Weeks
@@ -93,7 +133,6 @@ export default async function CardDetailPage({ params }) {
 
             {/* RIGHT COLUMN: Stats, Goals, Check-in */}
             <div className="lg:col-span-8 space-y-6">
-              {/* Top Stats Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 text-center">
                   <p className="text-3xl font-extrabold text-slate-800">
@@ -121,7 +160,6 @@ export default async function CardDetailPage({ params }) {
                 </div>
               </div>
 
-              {/* Relationship Goal Card */}
               <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative">
                 <button className="absolute top-6 right-6 text-[10px] font-bold text-slate-400 border border-slate-200 px-3 py-1 rounded-md hover:bg-slate-50">
                   EDIT
@@ -137,13 +175,16 @@ export default async function CardDetailPage({ params }) {
                 </p>
               </div>
 
-              {/* Quick Check-in Section */}
+              {/* Quick Check-in Buttons with Logic */}
               <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
                 <h2 className="font-bold text-slate-800 mb-6 text-lg">
                   Quick Check-in
                 </h2>
                 <div className="grid grid-cols-3 gap-4">
-                  <button className="flex flex-col items-center gap-3 p-6 bg-slate-50 rounded-2xl hover:bg-emerald-50 transition-all group border border-transparent hover:border-emerald-100">
+                  <button
+                    onClick={() => handleCheckIn("Call")}
+                    className="flex flex-col items-center gap-3 p-6 bg-slate-50 rounded-2xl hover:bg-emerald-50 transition-all group border border-transparent hover:border-emerald-100"
+                  >
                     <span className="text-2xl group-hover:scale-110 transition-transform">
                       📞
                     </span>
@@ -151,7 +192,10 @@ export default async function CardDetailPage({ params }) {
                       Call
                     </span>
                   </button>
-                  <button className="flex flex-col items-center gap-3 p-6 bg-slate-50 rounded-2xl hover:bg-emerald-50 transition-all group border border-transparent hover:border-emerald-100">
+                  <button
+                    onClick={() => handleCheckIn("Text")}
+                    className="flex flex-col items-center gap-3 p-6 bg-slate-50 rounded-2xl hover:bg-emerald-50 transition-all group border border-transparent hover:border-emerald-100"
+                  >
                     <span className="text-2xl group-hover:scale-110 transition-transform">
                       💬
                     </span>
@@ -159,7 +203,10 @@ export default async function CardDetailPage({ params }) {
                       Text
                     </span>
                   </button>
-                  <button className="flex flex-col items-center gap-3 p-6 bg-slate-50 rounded-2xl hover:bg-emerald-50 transition-all group border border-transparent hover:border-emerald-100">
+                  <button
+                    onClick={() => handleCheckIn("Video")}
+                    className="flex flex-col items-center gap-3 p-6 bg-slate-50 rounded-2xl hover:bg-emerald-50 transition-all group border border-transparent hover:border-emerald-100"
+                  >
                     <span className="text-2xl group-hover:scale-110 transition-transform">
                       📹
                     </span>
